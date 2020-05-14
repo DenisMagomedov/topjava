@@ -5,7 +5,7 @@
     <jmxConfigurator/>
 
     <appender name="file" class="ch.qos.logback.core.FileAppender">
-        <file>${TOPJAVA_ROOT}/log/topjava.log</file>
+        <file>d:/j2/topjava/log/topjava.log</file>
 
         <encoder>
             <charset>UTF-8</charset>
@@ -20,8 +20,10 @@
         </encoder>
     </appender>
 
+    <!--А здесь определил УРОВЕНЬ ЛОГГИНГА конкретно для ЭТОГО ПАКЕТА:-->
     <logger name="ru.javawebinar.topjava" level="debug"/>
 
+    <!--Определил УРОВЕНЬ ЛОГГИНГА для всего приложения в целом:-->
     <root level="info">
         <appender-ref ref="file"/>
         <appender-ref ref="console"/>
