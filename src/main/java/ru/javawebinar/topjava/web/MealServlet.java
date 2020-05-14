@@ -22,11 +22,15 @@ public class MealServlet extends HttpServlet {
 
     // чтобы фильтр по времени не сбрасывался, значения берутся отсюда
     private LocalTime startTime = LocalTime.MIN;
-    private LocalTime endTime = LocalTime.parse("23:59"); // если использовать LocalTime.MAX то отображается неправильно.. хз блин
+    private LocalTime endTime = LocalTime.parse("23:59"); // если использовать LocalTime.MAX то отображается неправильно.. хз блин почему
+
+    // будет кидаться на страницу, чтобы было понятно, будет ли она использоваться для редактирования
+    private boolean editingAttribute = false;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("redirect to users");
+
 
         // получаю параметр "action", если он есть:
         String action = request.getParameter("action");
@@ -37,12 +41,16 @@ public class MealServlet extends HttpServlet {
             MealDAO.deleteMeal(id);
         }
 
-        // лень писать... наверное эдд и едит нужно было делать в отдельном сервлете и отдельной jsp...
+        // И это не очень красиво, прямо тут обрабатываю запрос на редактирование по АйДишнику:
+        // меняю атрибут "редактирование" на ТРУ и ложу в запрос редактируемый Meal
         if(action != null && action.equals("edit")){
-
+            editingAttribute = true;
+            int id = Integer.parseInt(request.getParameter("id"));
+            Meal mealToEdit = MealDAO.getMealById(id);
+            request.setAttribute("mealToEdit", mealToEdit);
         }
 
-        // ловлю параметры и если они есть, и они не 00:00 - парсю и использую для получения mealsWithExcess с этим временем
+        // ловлю параметры и если они есть, и они не 00:00 - парсю и использую для фильтрации mealsWithExcess по такому времени
         String startTimeString = request.getParameter("starttime");
         String endTimeString = request.getParameter("endtime");
 
@@ -61,6 +69,8 @@ public class MealServlet extends HttpServlet {
         request.setAttribute("starttimez", startTime);
         request.setAttribute("endtimez", endTime);
 
+        request.setAttribute("editing", editingAttribute);
+
         request.setAttribute("mealz", mealsWithExcess);
         request.getRequestDispatcher("meals.jsp").forward(request, response);
     }
@@ -68,9 +78,9 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        // лень писать кучу сервлетов, буду использовать один, проверяя параметр "action"
+        // лень писать кучу сервлетов, буду использовать один, проверяя параметр "postAction"
 
-        String action = request.getParameter("action");
+        String action = request.getParameter("postAction");
 
         if(action != null && action.equals("add")){
             LocalDateTime dateTime = LocalDateTime.parse(request.getParameter("datetime"));
@@ -81,7 +91,17 @@ public class MealServlet extends HttpServlet {
             MealDAO.addMeal(newMeal);
         }
 
-        // перенаправил не меняя на doGet (хз тупо как-то, нужно найти другое решение)
+        if(action != null && action.equals("edit")){
+            int id = Integer.parseInt(request.getParameter("id"));
+            LocalDateTime dateTime = LocalDateTime.parse(request.getParameter("datetime"));
+            String description =  request.getParameter("description");
+            int calories =  Integer.parseInt(request.getParameter("calories"));
+
+            Meal oldMeal = new Meal(dateTime, description, calories);
+            MealDAO.editMeal(id, oldMeal);
+        }
+
+        // перенаправил не меняя на doGet
         doGet(request, response);
     }
 }

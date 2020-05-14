@@ -12,6 +12,7 @@
 <head>
     <title>Meals</title>
 
+    <%--можно обойтись и без CSS (смю дальше)--%>
     <style type="text/css">
         table{
             text-align: center;
@@ -24,6 +25,36 @@
         }
     </style>
 
+    <%--
+    Тут проверяю атрибут "editing"..
+    Зависит будет ли jsp'ха использоваться для редкатирования,
+    или будет отображаться стандартно.
+    В зависимости от прверки, создаются переменные с соответствубщими значениями.--%>
+    <c:choose>
+        <c:when test="${editing == false}">
+            <c:url var="editOrAddpath" value="meals?postAction=add"/>
+            <c:set var="buttonName" value="Add Meal"/>
+            <c:set var="idVal" value="-1"/>
+            <c:set var="datetimeVal" value="2020-01-01T00:00"/>
+            <c:set var="descriptionVal" value=""/>
+            <c:set var="caloriesVal" value="0"/>
+        </c:when>
+        <c:when test="${editing == true}">
+            <c:url var="editOrAddPath" value="meals?postAction=edit"/>
+            <c:set var="buttonName" value="Edit Meal"/>
+
+            <%--
+            Если будет редактирование элемента, то поля использующиеся для добавления нового элемента
+            будут заполнены значениями из этих переменных созданных из полей редактируемого meal (mealToEdit),
+            который прилетел сюда как атрибут, установленный, как ответ на запрос (жмак по ссылке "edit")
+            на странице отображения элементов ("Meals").
+            --%>
+            <c:set var="idVal" value="${mealToEdit.id}"/>
+            <c:set var="datetimeVal" value="${mealToEdit.dateTime}"/>
+            <c:set var="descriptionVal" value="${mealToEdit.description}"/>
+            <c:set var="caloriesVal" value="${mealToEdit.calories}"/>
+        </c:when>
+    </c:choose>
 
 </head>
     <body>
@@ -50,11 +81,13 @@
             <tr style="${mealTo.excess ? 'color: red' : 'color: forestgreen'}">--%>
 
                 <%-- используя CSS:--%>
+                <%--Тернарный оператор в JSTL:--%>
             <tr class="${mealTo.excess ? 'excessColor' : 'normalColor'}">
                 <td>${finalDate}</td>
                 <td>${mealTo.description}</td>
                 <td>${mealTo.calories}</td>
                 <td>
+                    <%--Ссылки на редактирование и удаление--%>
                     <a href="meals?action=edit&id=${mealTo.id}">edit</a>
                     <a href="meals?action=delete&id=${mealTo.id}">delete</a>
                 </td>
@@ -64,23 +97,35 @@
 
     <br/>
 
-    <form action="meals?action=add" method="post">
+    <%--
+    Это нижние три поля ввода "Дата" "Описание" "Калории"
+    Путь зависит от атрибута "editing" (который прилетел сюда из сервлета)
+       Если "editing" false, то эти поля ввода используются для создания нового элемента.
+    И запрос полетит по адресу "meals?postAction=add".
+       Если "editing" true, то поля заполняются данными редактируемого элемента и запрос полетит
+    по адресу "meals?postAction=edit". Кароч меняется только параметр "postAction".--%>
+    <form action="${editOrAddPath}" method="post">
+
+        <%-- невидимое поле, будет использоваться для РЕДАКТИРОВАНИЯ
+         (отправка в метод POST для создания нового meal с таким же id) --%>
+        <input type="hidden" value="${idVal}" name="id">
+
         <label>
             Date:
-            <input type="datetime-local" value="2020-01-01T00:00" name="datetime">
+            <input type="datetime-local" value="${datetimeVal}" name="datetime">
         </label>
 
         <label>
             Description:
-            <input type="text" name="description">
+            <input type="text" value="${descriptionVal}" name="description">
         </label>
 
         <label>
             Calories:
-            <input type="number" name="calories">
+            <input type="number" value="${caloriesVal}" name="calories">
         </label>
 
-        <input type="submit" value="Add">
+        <input type="submit" value="${buttonName}">
     </form>
 
 

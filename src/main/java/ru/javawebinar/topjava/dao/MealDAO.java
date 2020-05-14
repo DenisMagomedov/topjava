@@ -47,5 +47,9 @@ public class MealDAO {
         mealBase.replace(id, meal);
     }
 
+    public static Meal getMealById (int id){
+        return mealBase.get(id);
+    }
+
 
 }
