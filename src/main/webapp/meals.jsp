@@ -32,7 +32,7 @@
     В зависимости от прверки, создаются переменные с соответствубщими значениями.--%>
     <c:choose>
         <%--как вариант: ${editing == false} и ${editing == true}--%>
-        <c:when test="${editing == false}">
+        <c:when test="${not editing}">
             <c:url var="editOrAddPath" value="meals?postAction=add"/>
             <c:set var="buttonName" value="Add Meal"/>
             <c:set var="idVal" value="-1"/>
@@ -40,7 +40,7 @@
             <c:set var="descriptionVal" value=""/>
             <c:set var="caloriesVal" value="0"/>
         </c:when>
-        <c:when test="${editing == true}">
+        <c:when test="${editing}">
             <c:url var="editOrAddPath" value="meals?postAction=edit"/>
             <c:set var="buttonName" value="Edit Meal"/>
 
