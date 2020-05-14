@@ -32,15 +32,15 @@
     В зависимости от прверки, создаются переменные с соответствубщими значениями.--%>
     <c:choose>
         <%--как вариант: ${editing == false} и ${editing == true}--%>
-        <c:when test="${not editing}">
-            <c:url var="editOrAddpath" value="meals?postAction=add"/>
+        <c:when test="${editing == false}">
+            <c:url var="editOrAddPath" value="meals?postAction=add"/>
             <c:set var="buttonName" value="Add Meal"/>
             <c:set var="idVal" value="-1"/>
             <c:set var="datetimeVal" value="2020-01-01T00:00"/>
             <c:set var="descriptionVal" value=""/>
             <c:set var="caloriesVal" value="0"/>
         </c:when>
-        <c:when test="${editing}">
+        <c:when test="${editing == true}">
             <c:url var="editOrAddPath" value="meals?postAction=edit"/>
             <c:set var="buttonName" value="Edit Meal"/>
 
@@ -109,7 +109,7 @@
 
         <%-- невидимое поле, будет использоваться для РЕДАКТИРОВАНИЯ
          (отправка в метод POST для создания нового meal с таким же id) --%>
-        <input type="hidden" value="${idVal}" name="id">
+        <input type="hidden" value="${idVal}" name="idVal">
 
         <label>
             Date:

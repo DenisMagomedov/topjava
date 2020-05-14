@@ -44,6 +44,7 @@ public class MealDAO {
     }
 
     public static void editMeal (int id, Meal meal){
+        meal.setId(id);
         mealBase.replace(id, meal);
     }
 

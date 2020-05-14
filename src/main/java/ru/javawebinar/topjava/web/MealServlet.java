@@ -24,13 +24,13 @@ public class MealServlet extends HttpServlet {
     private LocalTime startTime = LocalTime.MIN;
     private LocalTime endTime = LocalTime.parse("23:59"); // если использовать LocalTime.MAX то отображается неправильно.. хз блин почему
 
-    // будет кидаться на страницу, чтобы было понятно, будет ли она использоваться для редактирования
-    private boolean editingAttribute = false;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("redirect to users");
 
+        // будет кидаться на страницу, чтобы было понятно, будет ли она использоваться для редактирования
+        boolean editingAttribute = false;
 
         // получаю параметр "action", если он есть:
         String action = request.getParameter("action");
@@ -78,6 +78,8 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        // [РЕШЕНИЕ!!!] руская кодировка в POST
+        request.setCharacterEncoding("UTF-8");
         // лень писать кучу сервлетов, буду использовать один, проверяя параметр "postAction"
 
         String action = request.getParameter("postAction");
@@ -92,7 +94,7 @@ public class MealServlet extends HttpServlet {
         }
 
         if(action != null && action.equals("edit")){
-            int id = Integer.parseInt(request.getParameter("id"));
+            int id = Integer.parseInt(request.getParameter("idVal"));
             LocalDateTime dateTime = LocalDateTime.parse(request.getParameter("datetime"));
             String description =  request.getParameter("description");
             int calories =  Integer.parseInt(request.getParameter("calories"));
