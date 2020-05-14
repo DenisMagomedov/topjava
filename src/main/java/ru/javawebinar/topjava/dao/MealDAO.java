@@ -5,12 +5,13 @@ import ru.javawebinar.topjava.model.Meal;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MealDAO {
     private static AtomicInteger autoId = new AtomicInteger(-1);
-    private static Map<Integer, Meal> mealBase = new HashMap<>();
+    private static Map<Integer, Meal> mealBase = new ConcurrentHashMap<>();
     static {
         addMeal(
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
