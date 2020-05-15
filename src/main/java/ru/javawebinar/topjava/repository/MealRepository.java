@@ -6,6 +6,8 @@ import java.util.Collection;
 
 public interface MealRepository {
     // null if not found, when updated
+    // И для создания и для обновления
+    // (в реализации проверка на NULL id, если NULL, то создание, если id есть, то обновление)
     Meal save(Meal meal);
 
     // false if not found
