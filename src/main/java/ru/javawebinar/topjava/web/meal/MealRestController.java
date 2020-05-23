@@ -6,31 +6,25 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.inmemory.InMemoryMealRepository;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.ValidationUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Collection;
 import java.util.List;
 
-import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
-import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
+import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
+
+@Controller
 public class MealRestController {
 
     private MealService service;
-    /*@Autowired
-    public void setService(MealService service) {
-        System.out.println(">>> СОЗДАН MealService");
-        this.service = service;
-    }*/
 
-    public MealRestController() {
-        this.service = new MealService(new InMemoryMealRepository());
+    @Autowired
+    private MealRestController(MealService mealService) {
+        this.service = mealService;
     }
 
     public void save (Meal meal, int id){

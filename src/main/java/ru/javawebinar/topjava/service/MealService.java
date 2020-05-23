@@ -3,22 +3,25 @@ package ru.javawebinar.topjava.service;
 import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
+@Service
 public class MealService {
     protected final Logger log = LoggerFactory.getLogger(MealService.class);
 
 
     private MealRepository repository;
 
+    @Autowired
     public MealService(MealRepository repository) {
         this.repository = repository;
     }
