@@ -21,6 +21,35 @@
     <h3><a href="index.html">Home</a></h3>
     <hr/>
     <h2>Meals</h2>
+
+    <%-- ФОРМА ДЛЯ ФИЛЬТРА:      --%>
+    <form method="post" action="meals">
+        <input type="hidden" name="filter" value="1">
+
+        <table>
+            <tr>
+                <td>
+                    <dl>
+                        <dt>Start Date:</dt>
+                        <dd><input type="date" value="" name="startDate"></dd>
+                        <dt>End Date:</dt>
+                        <dd><input type="date" value="" name="endDate"></dd>
+                    </dl>
+                </td>
+                <td>
+                    <dl>
+                        <dt>Start Time:</dt>
+                        <dd><input type="time" value="" name="startTime"></dd>
+                        <dt>End Time:</dt>
+                        <dd><input type="time" value="" name="endTime"></dd>
+                    </dl>
+                </td>
+            </tr>
+        </table>
+        <button type="submit">Filter</button>
+    </form>
+
+    <%--     Вывод еды:      --%>
     <a href="meals?action=create">Add Meal</a>
     <br><br>
     <table border="1" cellpadding="8" cellspacing="0">
@@ -34,7 +63,7 @@
         </tr>
         </thead>
         <c:forEach items="${meals}" var="meal">
-            <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.MealTo"/>
+            <jsp:useBean id="meal" type="ru.javawebinar.topjava.to.MealTo"/>
             <tr class="${meal.excess ? 'excess' : 'normal'}">
                 <td>
                         <%--${meal.dateTime.toLocalDate()} ${meal.dateTime.toLocalTime()}--%>

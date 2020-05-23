@@ -12,6 +12,11 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 @Service
 public class UserService {
 
+    // Почти во всех методах на получение\изменение\удаление
+    // выполняется проверка на наличие в утильном классе "ValidationUtil":
+    // Т.е. выполнение каждого из этих методов возвращает какое-то значение
+    // далее по цепочке идет проверка и если проверка не прошла - кидается исключение.
+
     private final UserRepository repository;
 
     public UserService(UserRepository repository) {
