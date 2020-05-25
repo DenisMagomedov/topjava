@@ -15,11 +15,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
     private static final Logger log = LoggerFactory.getLogger(InMemoryMealRepository.class);
+
+    /*
+    Если использовать MultiMap, то эффективность хранения возрастет, т.к. не нужно будет
+    перебирать ВЕСЬ сет значений с едой, а только принадлежащие конкретному юзеру:
+    Map<ЮзерId, Map<МилId, Мил>>
+    Т.е. ключи Мап - юзерАйДи, а значения - его личный Мап с едой.
+    А я, блядь, так и хотел же!
+     */
     private Map<Integer, Meal> repository = new ConcurrentHashMap<>();
     private AtomicInteger counter = new AtomicInteger(0);
 
@@ -51,14 +60,10 @@ public class InMemoryMealRepository implements MealRepository {
             repository.put(meal.getId(), meal);
             return meal;
         }
-        // если такой уже Мил уже есть, то он просто апдейтится:
+        // если такой Мил уже есть, то он просто апдейтится:
         // (... -> "что-то") - положит это значение к указанному ключу
         // просто если использовать "return put;" то он вернет предыдущее (замененное значение)
-        // НО ПОЧЕМУ ЭТОТ МИДОР не напишет
-        //          repository.put(meal.getId(), meal);
-        //          return meal;
-        // ПОСЛЕ if{}
-        // (возможно это страховка от того, что Мил может не лечь в репозиторий... я ХУЙ ЗНАЕТ)
+        // computeIfPresent вместе с ConcurrentHashMap - АТОМАРНАЯ операция
         return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
     }
 
@@ -74,6 +79,36 @@ public class InMemoryMealRepository implements MealRepository {
         Meal currentMeal = repository.get(id);
         return currentMeal.getOwnerId() == ownerId ? currentMeal : null;
     }
+
+    // А вот тут я ТУПАНУЛ СОВСЕМ...
+    // нахрен два раза ходить по одним и тем-же Миил'ам
+    // Нужно было использовать Предикейт,
+    // Т.е. из getAll СРАЗУ запускать getByDate,
+    // но с параметрами null null
+    // !!!(но блядь тогда будет дополнительно сортировка по датам (если переделать, как я писал в комменте в контроллере))
+    // Тот хрен вообще сделал отдельный метод с Predicate<Meal>
+
+    /*
+    @Override
+    public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
+        return getAllFiltered(userId, meal -> Util.isBetweenHalfOpen(meal.getDateTime(), startDateTime, endDateTime));
+    }
+
+    @Override
+    public List<Meal> getAll(int userId) {
+        return getAllFiltered(userId, meal -> true);
+    }
+
+    // типа основной метод поиска, о те два просто ставят ему Предикейт-фильтр
+    private List<Meal> getAllFiltered(int userId, Predicate<Meal> filter) {
+        Map<Integer, Meal> meals = usersMealsMap.get(userId);
+        return CollectionUtils.isEmpty(meals) ? Collections.emptyList() :
+                meals.values().stream()
+                        .filter(filter)
+                        .sorted(Comparator.comparing(Meal::getDateTime).reversed())
+                        .collect(Collectors.toList());
+    }
+     */
 
     @Override
     public List<Meal> getAll(int ownerId) {

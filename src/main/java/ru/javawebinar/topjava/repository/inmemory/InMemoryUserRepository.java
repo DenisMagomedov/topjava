@@ -43,11 +43,7 @@ public class InMemoryUserRepository implements UserRepository {
         // если такой уже Мил уже есть, то он просто апдейтится:
         // (... -> "что-то") - положит это значение к указанному ключу
         // просто если использовать "return put;" то он вернет предыдущее (замененное значение)
-        // НО ПОЧЕМУ ЭТОТ МИДОР не напишет
-        //          repository.put(meal.getId(), meal);
-        //          return meal;
-        // ПОСЛЕ if{}
-        // (возможно это страховка от того, что Мил может не леч в репозиторий... я ХУЙ ЗНАЕТ)
+        // computeIfPresent вместе с ConcurrentHashMap - АТОМАРНАЯ операция
         return repository.computeIfPresent(user.getId(), (id, oldMeal) -> user);
     }
 

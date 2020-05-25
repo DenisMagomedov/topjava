@@ -24,7 +24,27 @@ public class MealServlet extends HttpServlet {
 
     private MealRestController controller;
 
+    /*
+        [SPRING]
+        Тут я закрываю контекст сразу же после завершения блока try-catch
+        т.е. достаю нужный БИН и закрываю контекст...
+        ЛУЧШЕ ТАК НЕ ДЕЛАТЬ
+        КОНТЕКСТ ДОЛЖЕН БЫТЬ ОТКРЫТ ВСЁ ВРЕМЯ РАБОТЫ ПРИЛОЖЕНИЯ
 
+        ПОЭТОМУ:
+        * ConfigurableApplicationContext context - сделай полем класса.
+
+        * В .init() присвой ему значение, вытащи нужный БИН
+
+        * Переопредели метод сервлета .destroy():
+
+            @Override
+            public void destroy() {
+                :: и тут закрывай Спринг-Контекст ::
+            context.close();
+            super.destroy();
+    }
+     */
 
     @Override
     public void init(ServletConfig config) throws ServletException {

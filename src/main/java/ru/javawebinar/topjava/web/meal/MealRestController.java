@@ -59,6 +59,25 @@ public class MealRestController {
 
     public List<MealTo> getAll(String startDateString, String endDateString, String startTimeString, String endTimeString) {
 
+        // ВОТ ТУТ Я ЕБАНУЛСЯ (так и знал, когда делал)!
+        // Вместо всей этой хуиты достаточно просто было сделать нормально метод проверки дат:
+        /*
+        public static <T extends Comparable<T>> boolean isBetweenHalfOpen(T value, @Nullable T start, @Nullable T end) {
+        return (start == null || value.compareTo(start) >= 0) && (end == null || value.compareTo(end) < 0);
+        }
+         */
+        // НО ТУТ ЕЩЕ ПРОВЕРКА НА ПУСТОЕ ЗНАЧЕНИЕ....
+        // МОЖТ я и не ебанулся... хз хз..
+        // НО ГРОМОЗДКО как-то
+
+
+        // [НОВОЕ]
+        // Лучше не использовать значения MAX и MIN из-за возможных проблем при работе с базой данных
+        // (слишком маленькие и слишком большие значения)
+        // Идеально будет создать свои переменные:
+        //      LocalDateTime MIN_LDT = LocalDateTime.of(1,1,1,0,0)
+        //      LocalDateTime MAX_LDT = LocalDateTime.of(3000,1,1,0,0) (3000 год явно максимальный для этой приложули)
+
         LocalDate startDate = isDateTimeOk(startDateString) ? LocalDate.parse(startDateString) : LocalDate.MIN;
         LocalDate endDate = isDateTimeOk(endDateString) ? LocalDate.parse(endDateString) : LocalDate.MAX;
         LocalTime startTime = isDateTimeOk(startTimeString) ? LocalTime.parse(startTimeString) : LocalTime.MIN;
