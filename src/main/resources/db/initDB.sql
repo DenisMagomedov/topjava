@@ -27,10 +27,10 @@ CREATE TABLE user_roles
 
 CREATE TABLE meals(
     id              INTEGER PRIMARY KEY  DEFAULT nextval('global_seq'),
-    date_time       TIMESTAMP   UNIQUE      NOT NULL,
+    date_time       TIMESTAMP               NOT NULL,
     description     VARCHAR                 NOT NULL,
     calories        INTEGER                 NOT NULL,
     owner_id        INTEGER                 NOT NULL
+    /*CONSTRAINT  date_time_owner_index UNIQUE (date_time, owner_id)*/
 );
-
-CREATE INDEX owner_index ON meals(owner_id);
+CREATE UNIQUE INDEX date_owner_id_index ON meals(date_time, owner_id);
