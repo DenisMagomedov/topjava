@@ -18,7 +18,18 @@ import java.util.List;
 public class JdbcMealRepository implements MealRepository {
 
     private static final BeanPropertyRowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
-
+/*
+* ROW_MAPPER можно сделать свой:
+	// создаем анонимный клас на основе ИНТЕРФЕЙСА RowMapper<>:
+	RowMapper<Meal> ROW_MAPPER_2 = new RowMapper<Meal>() {
+        @Override
+		// Вручную вытаскиваю из ResultSet значения и создаю новый объект:
+		// (значения из rs можно брать и по Лэйблам колонок и по Номерам колонок...)
+        public Meal mapRow(ResultSet rs, int i) throws SQLException {
+            return new Meal(rs.getInt("id"), rs.getTimestamp("date_time")...);
+        }
+    }
+*/
     private final JdbcTemplate jdbcTemplate;
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -33,6 +44,15 @@ public class JdbcMealRepository implements MealRepository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
+    /*
+    * BeanPropertySqlParameterSource:
+    * MapSqlParameterSource можно поменять на BeanPropertySqlParameterSource
+	(поля для вставки определяются через отражение в бине и метаданные в SQL запросе).
+
+	[НО!] Как в JdbcMealRepository. Если есть параметр, которого в бине нет (owner_id), то придется
+	использовать по старинке - MapSqlParameterSource
+     */
+
     @Override
     public Meal save(Meal meal, int userId) {
         MapSqlParameterSource map = new MapSqlParameterSource()
@@ -42,8 +62,8 @@ public class JdbcMealRepository implements MealRepository {
                 .addValue("calories", meal.getCalories())
                 .addValue("ownerId", userId);
         if(meal.isNew()){
-            Number newkey = insertMeal.executeAndReturnKey(map);
-            meal.setId(newkey.intValue());
+            Number newKey = insertMeal.executeAndReturnKey(map);
+            meal.setId(newKey.intValue());
         } else if(0 == namedParameterJdbcTemplate.update("UPDATE meals SET date_time=:dateTime, " +
                 "description=:description, calories=:calories WHERE owner_id=:ownerId AND id=:id", map)){
             return null;

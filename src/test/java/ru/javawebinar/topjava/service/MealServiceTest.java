@@ -19,8 +19,16 @@ import java.util.List;
 
 import static ru.javawebinar.topjava.MealTestData.*;
 
-import static org.junit.Assert.*;
+
 import static ru.javawebinar.topjava.UserTestData.*;
+
+/*
+
+ * Сделай больше тестовых данных.
+ * Замени в ТЕСТЕ getAll() и between() ручное создание листа в
+   обратном порядке на сортированный в обратном порядке лист!
+
+ */
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
@@ -54,6 +62,9 @@ public class MealServiceTest {
 
     @Test
     public void getBetweenHalfOpen() {
+
+        // Вот тут замени ручное создание листа на сортированный в обратном порядке лист!
+
         LocalDateTime ldt = LocalDateTime.parse("2000-01-01T07:00");
 
         List<Meal> expectedMeals = new ArrayList<>();
@@ -76,6 +87,7 @@ public class MealServiceTest {
 
     @Test
     public void getAll() {
+        // И вот тут тоже замени ручное создание листа на сортированный в обратном порядке лист!
         Meal newMeal = service.create(getNewMeal(LocalDateTime.now()), USER_ID);
         List<Meal> actualList = service.getAll(USER_ID);
         List<Meal> expectedList = new ArrayList<>(Arrays.asList(newMeal, USER_BREAKFAST_1));
