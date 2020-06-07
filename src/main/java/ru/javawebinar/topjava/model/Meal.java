@@ -1,19 +1,34 @@
 package ru.javawebinar.topjava.model;
 
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+import org.hibernate.validator.constraints.Range;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+@Entity
+@Table(name = "meals"/*, uniqueConstraints =
+    @UniqueConstraint(name = "meals_unique_user_datetime_idx", columnNames = {"user_id","date_time"})*/)
 public class Meal extends AbstractBaseEntity {
+
+    @Column(name = "date_time", nullable = false)
+    //@NotBlank
+    //@PastOrPresent
     private LocalDateTime dateTime;
 
+    @Column(name = "description", nullable = false)
+    //@NotBlank
     private String description;
 
+    @Column(name = "calories")
+    //@Range(min = 10, max = 10000)
     private int calories;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
     public Meal() {
